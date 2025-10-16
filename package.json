@@ -1,0 +1,22 @@
+{
+	"name": "un-pass",
+	"type": "module",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "nuxt dev",
+		"dev:tauri": "tauri dev",
+		"build": "nuxt build",
+		"generate": "nuxt generate",
+		"postinstall": "nuxt prepare"
+	},
+	"dependencies": {
+		"@nuxt/icon": "2.0.0",
+		"nuxt": "^4.1.3",
+		"vue": "^3.5.22",
+		"vue-router": "^4.5.1"
+	},
+	"devDependencies": {
+		"@tauri-apps/cli": "^2.8.4"
+	}
+}
