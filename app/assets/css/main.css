@@ -30,8 +30,8 @@
 	--color-success-content: oklch(98% 0.014 180.72);
 	--color-warning: oklch(79% 0.184 86.047);
 	--color-warning-content: oklch(98% 0.026 102.212);
-	--color-error: oklch(65% 0.241 354.308);
-	--color-error-content: oklch(97% 0.014 343.198);
+	--color-error: oklch(57% 0.245 27.325);
+	--color-error-content: oklch(97% 0.013 17.38);
 	--radius-selector: 0.25rem;
 	--radius-field: 1rem;
 	--radius-box: 0rem;
@@ -68,7 +68,7 @@
 	--color-error: oklch(57% 0.245 27.325);
 	--color-error-content: oklch(97% 0.013 17.38);
 	--radius-selector: 0.25rem;
-	--radius-field: 0.5rem;
+	--radius-field: 0.25rem;
 	--radius-box: 0.5rem;
 	--size-selector: 0.25rem;
 	--size-field: 0.25rem;
@@ -102,6 +102,8 @@ html {
 @layer base {
 	html,
 	body {
+		@apply h-dvh;
+		overflow-y: hidden;
 		overflow-x: hidden;
 	}
 }
