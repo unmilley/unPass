@@ -3,12 +3,13 @@
 		<div
 			id="titlebar"
 			ref="titlebar"
-			class="navbar bg-base-100 shadow-sm px-0 fixed inset-x-0 top-0 min-h-0 h-[2.25rem] *:select-none"
+			class="navbar bg-base-100 px-0 fixed z-[999] inset-x-0 top-0 min-h-0 h-[2.25rem] *:select-none"
 		>
 			<div v-if="iconUrl" class="navbar-start">
-				<img :src="iconUrl" alt="unPass" class="pointer-events-none" />
+				<img :src="iconUrl" alt="unPass" class="m-4 size-6 pointer-events-none" />
 			</div>
 			<div class="navbar-end h-[2.25rem]">
+				<AppThemeSwitcher class="h-[2.25rem] btn-ghost rounded-none" />
 				<button class="btn h-[2.25rem] btn-ghost btn-square rounded-none" @click.prevent.stop="appWindow.minimize()">
 					<Icon name="bx:minus" size="1rem" />
 				</button>
