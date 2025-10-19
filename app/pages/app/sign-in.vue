@@ -110,7 +110,7 @@ const [isManualReg, changeManualReg] = useToggle(false)
 const isLogin = computed(() => isFinished && !!usersUsername.value.length && !isManualReg.value)
 
 const setLastUsername = () => {
-	const el = usersDB.value?.sort((a, b) => a.lastSeen - b.lastSeen)[0]
+	const el = usersDB.value?.sort((a, b) => b.lastSeen - a.lastSeen)[0]
 	if (!el) return
 	username.value = el.username
 }
