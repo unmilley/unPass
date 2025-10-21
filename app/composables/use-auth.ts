@@ -1,45 +1,63 @@
-import { key } from '@/src/constants/key'
+import { key as Key } from '@/src/constants/key'
 import { type User } from '@/types'
 import { isObject } from '@vueuse/core'
+import { nanoid } from 'nanoid'
+import { isUsers } from '~/types/type-guards'
 
 export const useAuth = createGlobalState(() => {
-	const {
-		data: USERS,
-		set,
-		isFinished,
-	} = createIdb<User[] | undefined>('auth', [], {
-		dbName: 'auth',
-		storeName: 'index',
-		throttle: 1000,
+	const { data: encryptedUsers, isFinished } = createIdb<string | null>('_auth', encrypt('[]', Key.get()))
+	const users = computed({
+		get: (): User[] | null => {
+			if (!isFinished.value) return null
+			const dec = decrypt(encryptedUsers.value ?? '', Key.get())
+			const parsedMaybeUsers = JSON.parse(dec)
+			return isUsers(parsedMaybeUsers) ? parsedMaybeUsers : null
+		},
+		set: (value) => {
+			if (!isFinished.value) return
+			encryptedUsers.value = value === null ? null : encrypt(JSON.stringify(value), Key.get())
+		},
 	})
 
-	const userId = ref<number | null>(null)
-	const user = computed<User | null>(() => {
-		if (!USERS.value || typeof userId.value !== 'number' || userId.value === -1) return null
-		return USERS.value[userId.value]!
+	const userId = shallowRef<string | null>(null)
+	const user = computed({
+		get: (): User | null => users.value?.filter(({ id }) => id === userId.value)[0] || null,
+		set: (val) => {
+			const id = users.value?.findIndex(({ id }) => id === userId.value) || -1
+			if (id === -1 || !users.value) return
+			if (val === null) users.value = users.value?.toSpliced(id, 1)
+			else users.value[id] = val
+		},
 	})
 
 	const isAuth = computed<boolean>(() => {
-		return user.value !== null && isObject(user.value) && 'username' in user.value && 'masterKey' in user.value
+		return (
+			user.value !== null &&
+			isObject(user.value) &&
+			'username' in user.value &&
+			'key' in user.value &&
+			'id' in user.value
+		)
 	})
 
-	const register = (username: string, masterKey: string): {} | { error: string } => {
+	const register = (username: string, masterKey: string): { error: string | null } => {
 		try {
-			if (!USERS.value) throw new Error('The database has not been prepared yet')
+			if (!isFinished.value || !users.value) throw new Error('The database has not been prepared yet')
 
-			username = slugGenerator(username)
-			if (USERS.value.map(({ username: un }) => un).includes(username)) {
-				throw new Error('Username is exist')
-			}
-			const data: User = {
+			if (users.value.map(({ username: un }) => un).includes(username)) throw new Error('Username is exist')
+
+			const newUser: User = {
+				id: nanoid(5),
 				username,
-				masterKey: encrypt(masterKey, key.get()),
+				key: encrypt(masterKey, Key.get()),
 				lastSeen: +new Date(),
 			}
 
-			set([...USERS.value, data])
-			return {}
-		} catch (error) {
+			users.value = [...users.value, newUser]
+			userId.value = newUser.id
+
+			return { error: null }
+		} catch (error: any) {
 			console.error(`useAuth(register): ${error}`)
 			if (error instanceof Error) {
 				return { error: error.message }
@@ -47,24 +65,20 @@ export const useAuth = createGlobalState(() => {
 			return { error: 'Something wrong' }
 		}
 	}
-
-	const login = (username: string, masterKey: string): {} | { error: string } => {
+	const login = (username: string, masterKey: string): { error: string | null } => {
 		try {
-			if (!USERS.value) throw new Error('The database has not been prepared yet')
+			if (!isFinished.value || !users.value) throw new Error('The database has not been prepared yet')
 
-			username = slugGenerator(username)
+			const foundedUser = users.value?.filter(({ username: name }) => name === username)[0] || null
+			if (!foundedUser) throw new Error('The user does not exist')
 
-			const foundUserId = USERS.value.map(({ username: un }) => un).findIndex((val) => val === username)
-			if (foundUserId === -1) throw new Error('The user does not exist')
-
-			const foundUser = USERS.value[foundUserId]!
-			const decryptedMasterKey = decrypt(foundUser.masterKey, key.get())
-
+			const decryptedMasterKey = decrypt(foundedUser.key, Key.get())
 			if (decryptedMasterKey !== masterKey) throw new Error('The master key is incorrect')
 
-			USERS.value[foundUserId]!.lastSeen = +new Date()
-			userId.value = foundUserId
-			return {}
+			userId.value = foundedUser.id
+			user.value && (user.value.lastSeen = +new Date())
+
+			return { error: null }
 		} catch (error: any) {
 			console.error(`useAuth(login): ${error}`)
 			if (error instanceof Error) {
@@ -75,8 +89,8 @@ export const useAuth = createGlobalState(() => {
 	}
 
 	const logout = () => {
-		userId.value = null
+		location.reload()
 	}
 
-	return { usersDB: USERS, user, isAuth, register, login, logout, isFinished }
+	return { usersDB: users, user, userId, isAuth, register, login, logout, isFinished }
 })

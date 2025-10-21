@@ -1,5 +1,6 @@
 export type User = {
+	id: string
+	key: string
 	username: string
-	masterKey: string
 	lastSeen: number
 }

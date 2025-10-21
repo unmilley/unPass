@@ -83,6 +83,16 @@
 	</div>
 </template>
 
+<script lang="ts">
+export function checkConditions(password: string) {
+	return [
+		{ title: 'At least 8 char', check: password.length >= 8 },
+		{ title: 'At least 1 uppercase', check: /(?=.*[A-Z])/.test(password) },
+		{ title: 'At least 1 number', check: /(?=.*\d)/.test(password) },
+	]
+}
+</script>
+
 <script lang="ts" setup>
 definePageMeta({ layout: 'app' })
 
@@ -107,10 +117,10 @@ const conditions = computed(() => {
 
 const usersUsername = computed(() => usersDB.value?.map(({ username }) => username) || [])
 const [isManualReg, changeManualReg] = useToggle(false)
-const isLogin = computed(() => isFinished && !!usersUsername.value.length && !isManualReg.value)
+const isLogin = computed(() => isFinished.value && !!usersUsername.value.length && !isManualReg.value)
 
 const setLastUsername = () => {
-	const el = usersDB.value?.sort((a, b) => b.lastSeen - a.lastSeen)[0]
+	const el = usersDB.value?.toSorted((a, b) => b.lastSeen - a.lastSeen)[0]
 	if (!el) return
 	username.value = el.username
 }
@@ -138,29 +148,21 @@ watchThrottled(
 const handleSubmit = () => {
 	if (isLogin.value) {
 		const data = login(username.value, password.value)
-		if ('error' in data) {
+		if (data.error) {
 			passwordError.value = data.error
 			passwordEl.value?.focus()
 			return
 		}
 	} else {
 		const data = register(username.value, password.value)
-		if ('error' in data) {
+		if (data.error) {
 			passwordError.value = data.error
 			passwordEl.value?.focus()
 			return
 		}
+		changeManualReg(false)
+		handleSubmit()
 	}
 	navigateTo('/app')
-}
-</script>
-
-<script lang="ts">
-function checkConditions(password: string) {
-	return [
-		{ title: 'At least 8 char', check: password.length >= 8 },
-		{ title: 'At least 1 uppercase', check: /(?=.*[A-Z])/.test(password) },
-		{ title: 'At least 1 number', check: /(?=.*\d)/.test(password) },
-	]
 }
 </script>
