@@ -4492,10 +4492,12 @@ dependencies = [
  "log",
  "serde",
  "serde_json",
+ "tao",
  "tauri",
  "tauri-build",
  "tauri-plugin-log",
  "tauri-plugin-opener",
+ "wry",
 ]
 
 [[package]]
