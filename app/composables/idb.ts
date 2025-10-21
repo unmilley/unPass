@@ -1,20 +1,20 @@
 import { watchPausable, type ConfigurableFlush, type RemovableRef } from '@vueuse/core'
 import { createStore, del, get, set, update } from 'idb-keyval'
-import type { ShallowRef } from 'vue'
+import type { MaybeRefOrGetter, ShallowRef } from 'vue'
+import { shallowRef, toRaw, toValue } from 'vue'
 
-export interface IDBOptions extends ConfigurableFlush {
+interface Serializer<T> {
+	read: (raw: unknown) => T
+	write: (value: T) => unknown
+}
+
+export interface IDBOptions<T> extends ConfigurableFlush {
 	/**
 	 * Watch for deep changes
 	 *
 	 * @default true
 	 */
 	deep?: boolean
-	/**
-	 * Watch with throttle
-	 *
-	 * @default 0
-	 */
-	throttle?: number
 
 	/**
 	 * On error callback
@@ -31,53 +31,51 @@ export interface IDBOptions extends ConfigurableFlush {
 	writeDefaults?: boolean
 
 	/**
-	 * Name for database ['pieDB' => dbName]
-	 *
-	 * @default 'pieDB'
+	 * Custom data serialization
 	 */
-	dbName?: string
-
-	/**
-	 * Name for store ['berries' => storeName]
-	 *
-	 * @default 'berries'
-	 */
-	storeName?: string
+	serializer?: Serializer<T>
 }
+
 export interface IDBReturn<T> {
 	data: RemovableRef<T>
 	isFinished: ShallowRef<boolean>
 	set: (value: T) => Promise<void>
 }
 
-export const createIdb = <T>(key: IDBValidKey, initialValue: T, options: IDBOptions = {}): IDBReturn<T> => {
+export const createIdb = <T>(
+	key: IDBValidKey,
+	initialValue: MaybeRefOrGetter<T>,
+	options: IDBOptions<T> = {},
+): IDBReturn<T> => {
 	const {
 		flush = 'pre',
 		deep = true,
-		writeDefaults = true,
-		dbName = 'pieDB',
-		storeName = 'berries',
-		throttle = 1000,
 		onError = (e) => {
 			console.error(e)
 		},
+		writeDefaults = true,
+		serializer = {
+			read: (raw: unknown) => raw as T,
+			write: (value: T) => value,
+		},
 	} = options
 
-	const store = createStore(dbName, storeName)
+	const store = createStore('unPass', 'index')
 	const isFinished = shallowRef(false)
-	const data = useState<T>(`idb:${dbName}:${storeName}:${key}`, () => toValue(initialValue))
+	const data = useState<T>(`idb:${key}`, () => toValue(initialValue))
 
 	const rawInit: T = toValue(initialValue)
 
 	const read = async () => {
 		try {
-			const rawValue = await get<T>(key, store)
+			const rawValue = await get<string>(key, store)
 			if (rawValue === undefined) {
 				if (rawInit !== undefined && rawInit !== null && writeDefaults) {
-					await set(key, rawInit, store)
+					const initValue = serializer.write(rawInit)
+					await set(key, initValue, store)
 				}
 			} else {
-				data.value = rawValue
+				data.value = serializer.read(rawValue)
 			}
 		} catch (error) {
 			onError(error)
@@ -90,20 +88,18 @@ export const createIdb = <T>(key: IDBValidKey, initialValue: T, options: IDBOpti
 	const write = async () => {
 		try {
 			if (data.value == null) {
-				return await del(key, store)
+				await del(key)
+			} else {
+				const rawValue = toRaw(data.value)
+				const serializedValue = serializer.write(rawValue)
+				await update(key, () => serializedValue, store)
 			}
-			await update(key, () => toRaw(data.value), store)
 		} catch (error) {
 			onError(error)
 		}
 	}
 
-	const writeThrottle = useThrottleFn(write, throttle)
-
-	const { pause: pauseWatch, resume: resumeWatch } = watchPausable(data, () => writeThrottle(), {
-		flush,
-		deep,
-	})
+	const { pause: pauseWatch, resume: resumeWatch } = watchPausable(data, () => write(), { flush, deep })
 
 	const setData = async (value: T): Promise<void> => {
 		pauseWatch()
