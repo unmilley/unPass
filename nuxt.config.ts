@@ -7,6 +7,17 @@ export default defineNuxtConfig({
 
 	css: ['~/assets/css/main.css'],
 
+	components: {
+		dirs: [
+			{
+				path: '~/components/ui',
+				pathPrefix: false,
+				global: true,
+			},
+			'~/components',
+		],
+	},
+
 	icon: {
 		mode: 'svg',
 		collections: ['bx'],
