@@ -1,4 +1,4 @@
-import { watchPausable, type ConfigurableFlush, type RemovableRef } from '@vueuse/core'
+import { type ConfigurableFlush, type RemovableRef } from '@vueuse/core'
 import { createStore, del, get, set, update } from 'idb-keyval'
 import type { MaybeRefOrGetter, ShallowRef } from 'vue'
 import { shallowRef, toRaw, toValue } from 'vue'
@@ -99,7 +99,7 @@ export const createIdb = <T>(
 		}
 	}
 
-	const { pause: pauseWatch, resume: resumeWatch } = watchPausable(data, () => write(), { flush, deep })
+	const { pause: pauseWatch, resume: resumeWatch } = watch(data, () => write(), { flush, deep })
 
 	const setData = async (value: T): Promise<void> => {
 		pauseWatch()
