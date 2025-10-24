@@ -30,6 +30,8 @@ export const useAuth = createGlobalState(() => {
 		},
 	})
 
+	const userUsernames = computed(() => users.value?.map(({ username }) => username) || [])
+
 	const isAuth = computed<boolean>(() => {
 		return (
 			user.value !== null &&
@@ -40,7 +42,10 @@ export const useAuth = createGlobalState(() => {
 		)
 	})
 
-	const register = (username: string, masterKey: string): { error: string | null } => {
+	const register = (
+		username: string,
+		masterKey: string,
+	): { error: string; data?: undefined } | { error: null; data: User } => {
 		try {
 			if (!isFinished.value || !users.value) throw new Error('The database has not been prepared yet')
 
@@ -56,7 +61,7 @@ export const useAuth = createGlobalState(() => {
 			users.value = [...users.value, newUser]
 			userId.value = newUser.id
 
-			return { error: null }
+			return { error: null, data: newUser }
 		} catch (error: any) {
 			console.error(`useAuth(register): ${error}`)
 			if (error instanceof Error) {
@@ -92,5 +97,23 @@ export const useAuth = createGlobalState(() => {
 		location.reload()
 	}
 
-	return { usersDB: users, user, userId, isAuth, register, login, logout, isFinished }
+	const verifyKey = (password: string, key: string): boolean => {
+		return encrypt(password, Key.get()) !== key
+	}
+
+	const isExistUser = (username: string): boolean => userUsernames.value.includes(username)
+
+	return {
+		usersDB: users,
+		user,
+		userId,
+		userUsernames,
+		isAuth,
+		register,
+		login,
+		logout,
+		isFinished,
+		verifyKey,
+		isExistUser,
+	}
 })
