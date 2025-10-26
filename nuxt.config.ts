@@ -23,6 +23,7 @@ export default defineNuxtConfig({
 		collections: ['bx'],
 		provider: 'iconify',
 		size: '1.25rem',
+		customCollections: [{ dir: './app/assets/icons', prefix: 'pass' }],
 	},
 
 	colorMode: {

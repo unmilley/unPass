@@ -2,8 +2,8 @@
 	<label class="btn btn-square swap swap-rotate">
 		<input type="checkbox" v-model="isDark" />
 
-		<Icon name="bx:sun" class="swap-on" />
-		<Icon name="bx:moon" class="swap-off" />
+		<Icon name="pass:sun" class="swap-on" />
+		<Icon name="pass:moon" class="swap-off" />
 	</label>
 </template>
 
