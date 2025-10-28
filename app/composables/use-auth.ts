@@ -1,8 +1,7 @@
 import { key as Key } from '@/src/constants/key'
 import { type User } from '@/types'
-import { isObject } from '@vueuse/core'
 import { nanoid } from 'nanoid'
-import { isUsers } from '~/types/type-guards'
+import { isUser, isUsers } from '~/types/guards'
 
 export const useAuth = createGlobalState(() => {
 	const { data: encryptedUsers, isFinished } = createIdb<string | null>('_auth', encrypt('[]', Key.get()))
@@ -32,15 +31,7 @@ export const useAuth = createGlobalState(() => {
 
 	const userUsernames = computed(() => users.value?.map(({ username }) => username) || [])
 
-	const isAuth = computed<boolean>(() => {
-		return (
-			user.value !== null &&
-			isObject(user.value) &&
-			'username' in user.value &&
-			'key' in user.value &&
-			'id' in user.value
-		)
-	})
+	const isAuth = computed<boolean>(() => isUser(user.value))
 
 	const register = (
 		username: string,
@@ -104,15 +95,15 @@ export const useAuth = createGlobalState(() => {
 	const isExistUser = (username: string): boolean => userUsernames.value.includes(username)
 
 	return {
-		usersDB: users,
+		usersDB: readonly(users),
+		isFinished: readonly(isFinished),
+		isAuth: readonly(isAuth),
 		user,
 		userId,
 		userUsernames,
-		isAuth,
 		register,
 		login,
 		logout,
-		isFinished,
 		verifyKey,
 		isExistUser,
 	}

@@ -1,13 +1,14 @@
 export type AccountData = {
-	title: string
+	title?: string
 	login: string
 	password: string
-	description: string
+	description?: string
 }
 
 export type Account = {
-	title: string
-	url: string | undefined
+	title?: string
+	url?: string
+	id: string
 
 	data: AccountData[]
 }
