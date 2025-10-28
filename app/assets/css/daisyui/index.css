@@ -1,0 +1,8 @@
+@plugin "daisyui" {
+	themes: light --default, dark --prefersdark;
+	root: ':root';
+	logs: false;
+}
+
+@import './light.css';
+@import './dark.css';
