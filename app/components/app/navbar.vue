@@ -10,11 +10,7 @@
 					<img src="/pwa/favicon.svg" alt="unPass" class="ml-1 size-4.5" />
 				</div>
 				<span v-if="user" class="pointer-events-none font-mono text-sm">{{ user.username }}</span>
-				<span
-					v-else
-					@click="navigateTo('/app/sign-in')"
-					class="~pointer-events-none font-mono text-sm flex gap-2 link link-hover"
-				>
+				<span v-else @click="navigateTo('/app/sign-in')" class="font-mono text-sm flex gap-2 link link-hover">
 					Login
 					<Icon name="bx:chevron-left" />
 				</span>
