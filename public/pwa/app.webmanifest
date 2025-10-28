@@ -8,7 +8,7 @@
 	"shortcuts": [
 		{
 			"name": "Add account",
-			"url": "/app/accounts"
+			"url": "/app/accounts?new"
 		}
 	],
 	"icons": [
