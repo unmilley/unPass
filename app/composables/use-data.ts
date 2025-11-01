@@ -3,10 +3,10 @@ import { key as Key } from '~/src/constants/key'
 import type { Data } from '~/types'
 import { isData } from '~/types/guards'
 
-type KeysDefaultData = keyof typeof DEFAULT_DATA
+type DataKey = keyof typeof DEFAULT_DATA
 
 type DataArrayTypes = {
-	[K in KeysDefaultData]: Data[K] extends (infer U)[] ? U : never
+	[K in DataKey]: Data[K] extends Array<infer U> ? U : never
 }
 
 export const useData = () => {
@@ -29,7 +29,7 @@ export const useData = () => {
 		},
 	})
 
-	const set = <T extends KeysDefaultData>(type: T, value: Data[T]): { error: null | string } => {
+	const set = <T extends DataKey>(type: T, value: Data[T]): { error: null | string } => {
 		try {
 			if (!data.value) throw new Error('Data not found')
 
@@ -37,28 +37,22 @@ export const useData = () => {
 			return { error: null }
 		} catch (error) {
 			console.error(`useData(set): ${error}`)
-			if (error instanceof Error) {
-				return { error: error.message }
-			}
-			return { error: 'Something wrong' }
+			return { error: error instanceof Error ? error.message : 'Unknown error' }
 		}
 	}
 
-	const push = <T extends KeysDefaultData>(type: T, value: DataArrayTypes[T]): { error: null | string } => {
+	const push = <T extends DataKey>(type: T, value: DataArrayTypes[T]): { error: null | string } => {
 		try {
 			if (!data.value) throw new Error('Data not found')
 
 			const currentData = data.value[type]
-			currentData.push(value)
+			currentData.push(value as any)
 			data.value = { ...data.value, [type]: currentData }
 
 			return { error: null }
 		} catch (error) {
 			console.error(`useData(push): ${error}`)
-			if (error instanceof Error) {
-				return { error: error.message }
-			}
-			return { error: 'Something wrong' }
+			return { error: error instanceof Error ? error.message : 'Unknown error' }
 		}
 	}
 

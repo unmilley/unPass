@@ -55,12 +55,10 @@ export const useAuth = createGlobalState(() => {
 			return { error: null, data: newUser }
 		} catch (error: any) {
 			console.error(`useAuth(register): ${error}`)
-			if (error instanceof Error) {
-				return { error: error.message }
-			}
-			return { error: 'Something wrong' }
+			return { error: error instanceof Error ? error.message : 'Unknown error' }
 		}
 	}
+
 	const login = (username: string, masterKey: string): { error: string | null } => {
 		try {
 			if (!isFinished.value || !users.value) throw new Error('The database has not been prepared yet')
@@ -77,10 +75,7 @@ export const useAuth = createGlobalState(() => {
 			return { error: null }
 		} catch (error: any) {
 			console.error(`useAuth(login): ${error}`)
-			if (error instanceof Error) {
-				return { error: error.message }
-			}
-			return { error: 'Something wrong' }
+			return { error: error instanceof Error ? error.message : 'Unknown error' }
 		}
 	}
 
