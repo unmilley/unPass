@@ -1,7 +1,7 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 	"productName": "unPass",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"identifier": "uno.milley.un-pass",
 	"build": {
 		"frontendDist": "../dist",
@@ -30,6 +30,25 @@
 	"bundle": {
 		"active": true,
 		"targets": "all",
-		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+		"license": "LICENSE",
+		"createUpdaterArtifacts": true,
+		"windows": {
+			"certificateThumbprint": null,
+			"digestAlgorithm": "sha256",
+			"timestampUrl": ""
+		},
+		"macOS": {
+			"minimumSystemVersion": "",
+			"signingIdentity": null
+		}
+	},
+	"plugins": {
+		"updater": {
+			"active": false,
+			"dialog": false,
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM3RDE5Njc3RkVEMDM4RDMKUldUVE9ORCtkNWJSeHdKa0ZXQ21kemFBTngxYTc2bXVjZGdMY0ZPQmROTktkcDV2YUZxajVDUEcK",
+			"endpoints": ["https://api.github.com/repos/unmilley/unPass/releases/latest"]
+		}
 	}
 }
