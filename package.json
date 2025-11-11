@@ -1,15 +1,15 @@
 {
 	"name": "un-pass",
 	"type": "module",
-	"version": "0.31.2",
+	"version": "0.31.3",
 	"private": true,
 	"scripts": {
 		"dev": "nuxt dev",
 		"dev:tauri": "tauri dev",
 		"build": "nuxt build",
+		"build:tauri": "tsx ./scripts/_prebuild.ts && tauri build",
 		"generate": "nuxt generate",
-		"postinstall": "pnpm use-env-key & nuxt prepare",
-		"use-env-key": "tsx ./scripts/useEnvKey.ts"
+		"postinstall": "tsx ./scripts/_postinstall.ts & nuxt prepare"
 	},
 	"dependencies": {
 		"@nuxt/icon": "2.0.0",

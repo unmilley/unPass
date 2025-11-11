@@ -14,9 +14,9 @@ async function replaceInFileAsync(filePath: string, searchString: string, replac
 		const newContent = fileContent.replace(searchString, replacementString)
 		await writeFile(filePath, newContent, 'utf8')
 
-		console.log('✔️ The file(`key.ts`) has been updated successfully')
+		console.log('✔️  The file(`key.ts`) has been updated successfully')
 	} catch (error) {
-		console.error('❌ Error when working with a file:', error)
+		console.error('❌  Error when working with a file:', error)
 		process.exit(1)
 	}
 }
