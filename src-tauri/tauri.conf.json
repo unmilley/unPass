@@ -1,8 +1,8 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 	"productName": "unPass",
-	"version": "0.1.3",
-	"identifier": "uno.unPass.dev",
+	"version": "1.0.0",
+	"identifier": "uno.milley.un-pass",
 	"build": {
 		"frontendDist": "../dist",
 		"devUrl": "http://localhost:3000",

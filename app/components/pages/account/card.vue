@@ -8,13 +8,13 @@
 			class="card-body grid grid-cols-[1fr] gap-2.5 p-0 transition-[grid-template-rows] duration-1000 overflow-hidden"
 			:class="[isEdit ? 'grid-rows-[64px_108px_40px_40px]' : 'grid-rows-[64px_154px_40px]']"
 		>
-			<AccountCardHeader v-model="account" :is-edit :title @edit="idForEdit = $event" @delete="deleteAccount($event)" />
+			<AccountHeader v-model="account" :is-edit :title @edit="idForEdit = $event" @delete="deleteAccount($event)" />
 			<!--   -->
 			<div class="flex flex-col px-4 transition-[height] duration-1000" :class="[isEdit ? 'h-[124px]' : 'h-[158px]']">
 				<Carousel ref="carouselRef" v-model="currentSlide" v-bind="config" class="h-[inherit]!">
 					<template v-if="account.data.length">
 						<Slide v-for="(data, index) in account.data" :key="index" :index>
-							<AccountCardItem ref="account-form" :data :is-edit @update:data="account.data[index] = $event" />
+							<AccountItem ref="account-form" :data :is-edit @update:data="account.data[index] = $event" />
 						</Slide>
 					</template>
 					<Slide :key="account.data.length" :index="account.data.length">
@@ -79,16 +79,8 @@ const amountSlides = computed(() => account.data.length + 1)
 const title = computed(() => (account.title ? account.title : transformDomain(account.url ?? '')))
 
 const addEmptyData = () => {
-	console.log({
-		currentSlide: currentSlide.value,
-		amountSlides: amountSlides.value,
-	})
 	if (!isEdit.value) idForEdit.value = account.id
 	account.data.push({ login: '', password: '' })
-	console.log({
-		currentSlide: currentSlide.value,
-		amountSlides: amountSlides.value,
-	})
 }
 
 const deleteAccount = (id: string) => {

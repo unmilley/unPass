@@ -2,7 +2,7 @@
 	<div>
 		<picture v-if="url">
 			<source v-for="favicon in favicons.base" :key="favicon" :srcset="favicon" />
-			<img :src="favicons.last" :alt="url" style="height: auto; width: 1.5rem" />
+			<img :src="favicons.last" :alt="url" style="height: auto; width: 1.5rem" crossorigin="anonymous" />
 		</picture>
 	</div>
 </template>

@@ -34,3 +34,12 @@ html {
 .qwe3 * {
 	border: 1px solid salmon;
 }
+
+textarea {
+	-ms-overflow-style: none;
+	scrollbar-width: none;
+}
+
+textarea::-webkit-scrollbar {
+	display: none;
+}
