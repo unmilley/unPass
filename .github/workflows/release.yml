@@ -36,7 +36,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           cache: pnpm
-          node-version: 'package.json'
+          node-version-file: 'package.json'
 
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
