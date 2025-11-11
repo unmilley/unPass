@@ -1,7 +1,7 @@
 # unPass
 
 <p align="center">
-  <a href="https://github.com/unmilley/textypie/blob/main/LICENSE"><img src="https://img.shields.io/github/license/unmilley/textypie.svg?style=flat&colorA=262626&colorB=d7d7d7"></a>
+  <a href="https://github.com/unmilley/unPass/blob/main/LICENSE"><img src="https://img.shields.io/github/license/unmilley/unPass.svg?style=flat&colorA=262626&colorB=d7d7d7"></a>
 </p>
 
 ## Development
@@ -10,7 +10,7 @@
 
 <summary>local development</summary>
 
-### Tauri:
+### Tauri
 
 - Follow the instructions from [Tauri](https://v2.tauri.app/start/prerequisites/)
 
@@ -23,6 +23,13 @@
 - Run the application using `pnpm dev` as web
 - Run the application using `pnpm dev:tauri` as app/web
 
+### Git
+
+##### Stop tracking a file from an indexed file:
+
+- `git update-index --assume-unchanged <filename>`
+  - `app\src\constants\key.ts`
+- `git update-index --no-assume-unchanged <filename>` <- back
 </details>
 
 ###
