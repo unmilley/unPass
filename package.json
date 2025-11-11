@@ -1,7 +1,7 @@
 {
 	"name": "un-pass",
 	"type": "module",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"private": true,
 	"author": "Alexandr Lyadov <https://milley.uno>",
 	"license": "MIT",
@@ -11,7 +11,7 @@
 		"build": "nuxt build",
 		"build:tauri": "tsx ./scripts/_prebuild.ts && tauri build",
 		"generate": "nuxt generate",
-		"postinstall": "tsx ./scripts/_postinstall.ts & nuxt prepare"
+		"postinstall": "tsx ./scripts/_postinstall.ts && nuxt prepare"
 	},
 	"dependencies": {
 		"@nuxt/icon": "2.1.0",

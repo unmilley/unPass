@@ -51,12 +51,9 @@ jobs:
           sudo apt install -y curl wget patchelf libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev libgtk-3-dev
         # libwebkit2gtk 4.0 is for Tauri v1 - libwebkit2gtk 4.1 is for Tauri v2.
 
-      - name: 'Create env file'
-        run: |
-          touch .env
-          echo API_KEY=${{ secrets.KEY_PASS }} >> .env
-
       - name: Install frontend dependencies
+        env:
+          KEY_PASS: ${{ secrets.KEY_PASS }}
         run: |
           pnpm install
 
